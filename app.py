@@ -1,4 +1,6 @@
 import streamlit as st
+import pandas as pd
+from datetime import datetime
 
 # Force responsive full-screen viewport layout
 st.set_page_config(
@@ -43,10 +45,10 @@ st.markdown("""
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 15px;
+        gap: 12px;
         width: 100%;
         max-width: 400px;
-        margin: 0 auto;
+        margin: 0 auto 25px auto;
     }
     
     /* White Buttons with Black Text styling for all devices */
@@ -68,22 +70,28 @@ st.markdown("""
         transform: scale(1.02);
     }
     
-    /* Secondary Content Styling */
-    .content-box {
-        background-color: rgba(255, 255, 255, 0.85);
-        padding: 20px;
+    /* Workspace Card Container */
+    .workspace-card {
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 25px;
         border-radius: 12px;
-        margin-top: 25px;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        max-width: 800px;
+        margin: 0 auto;
         color: #333333;
     }
     
-    /* Floating Home Button for small screens / long scrolls */
+    .workspace-title {
+        color: #000080;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #87CEEB;
+        padding-bottom: 10px;
+    }
+
+    /* Floating Home Button */
     .home-link-container {
         text-align: center;
-        margin-top: 30px;
+        margin-top: 40px;
         margin-bottom: 20px;
     }
     .home-link {
@@ -93,12 +101,36 @@ st.markdown("""
         font-size: 16px;
     }
     </style>
-    
-    <!-- Anchor tag at the very top of the page for Home navigation -->
     <div id="top"></div>
 """, unsafe_allow_html=True)
 
-# 1. METALLIC WRENCH LOGO (Rendered via clean vector SVG to look crisp on mobile Retina displays)
+# Initialize Session State Data Tables (Persists data during app usage)
+if "view" not in st.session_state:
+    st.session_state.view = "Welcome"
+
+if "mechanic_tickets" not in st.session_state:
+    # Starter tickets counter
+    st.session_state.mechanic_tickets = 4
+
+if "work_records" not in st.session_state:
+    # Starter database for work logs
+    st.session_state.work_records = pd.DataFrame([
+        {"Date": "2026-07-24", "Tech": "Alex M.", "Job Details": "Brake pad replacement and rotor resurfacing."},
+        {"Date": "2026-07-25", "Tech": "Sam K.", "Job Details": "System diagnostic check and battery replacement."}
+    ])
+
+if "parts_inventory" not in st.session_state:
+    # Mock parts database to show off searching/filtering
+    st.session_state.parts_inventory = pd.DataFrame([
+        {"Part ID": "P101", "Name": "Heavy Duty Brake Pads", "Category": "Brakes", "Stock": 14, "Location": "Shelf A1"},
+        {"Part ID": "P102", "Name": "Premium Oil Filter", "Category": "Filters", "Stock": 32, "Location": "Shelf B3"},
+        {"Part ID": "P103", "Name": "12V Automotive Battery", "Category": "Electrical", "Stock": 8, "Location": "Floor Bay 2"},
+        {"Part ID": "P104", "Name": "Serpentine Belt", "Category": "Belts", "Stock": 19, "Location": "Shelf A4"},
+        {"Part ID": "P105", "Name": "Spark Plug Set (X4)", "Category": "Engine", "Stock": 25, "Location": "Shelf C2"},
+        {"Part ID": "P106", "Name": "Air Filter Assembly", "Category": "Filters", "Stock": 11, "Location": "Shelf B4"}
+    ])
+
+# 1. METALLIC WRENCH LOGO (Vector SVG)
 st.markdown("""
     <div class="logo-container">
         <svg class="metallic-wrench" viewBox="0 0 24 24" xmlns="http://w3.org">
@@ -116,15 +148,10 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# 2. TITLE (Navy Blue, 32px)
+# 2. TITLE
 st.markdown('<div class="app-title">App Tech Skills</div>', unsafe_allow_html=True)
 
-# Initialize track state for menu selection
-if "view" not in st.session_state:
-    st.session_state.view = "Welcome"
-
-# 3. RESPONSIVE VERTICAL BUTTONS CONTAINER
-# Using standard elements inside a centered CSS flexible box wrapper
+# 3. VERTICAL NAVIGATION BUTTONS (Stretches on mobile, stays compact on computer display)
 st.markdown('<div class="nav-container">', unsafe_allow_html=True)
 
 if st.button("Info", key="btn_info"):
@@ -141,21 +168,81 @@ if st.button("Parts Utilized", key="btn_parts"):
 
 st.markdown('</div>', unsafe_allow_html=True)
 
-# 4. ACTIVE DISPLAY WORKSPACE
-# Content updates inside a card without requiring extra screen reloads
-if st.session_state.view != "Welcome":
-    st.markdown(f"""
-        <div class="content-box">
-            <h3>📂 {st.session_state.view} Workspace</h3>
-            <p>You have accessed the <strong>{st.session_state.view}</strong> dashboard pane.</p>
-            <p>This layout adapts automatically to fit computer monitors, iPads, and phone displays full screen.</p>
+# 4. ACTIVE DYNAMIC DASHBOARD WORKSPACES
+if st.session_state.view == "Welcome":
+    st.markdown("""
+        <div class="workspace-card" style="text-align: center;">
+            <h3 class="workspace-title">Welcome to App Tech Skills</h3>
+            <p>Select an option from the menu list above to manage shop logs, track parts, or view analytics indicators.</p>
         </div>
     """, unsafe_allow_html=True)
 
-# 5. GO HOME / TOP LINK
-# Allows mobile users to jump seamlessly back up to the header context
-st.markdown("""
-    <div class="home-link-container">
-        <a href="#top" class="home-link">🔼 Return to Top (Home)</a>
-    </div>
-""", unsafe_allow_html=True)
+elif st.session_state.view == "Info":
+    st.markdown("""
+        <div class="workspace-card">
+            <h3 class="workspace-title">ℹ️ System Information</h3>
+            <p><strong>App Platform:</strong> Cloud Web-App Environment</p>
+            <p><strong>Target Devices:</strong> Optimized dynamically for Desktop Fullscreen, iPad Pro, iPad Mini, iPhone, and Android platforms.</p>
+            <p><strong>Engine State:</strong> Active memory tracking protocol running.</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+elif st.session_state.view == "Mechanic Services":
+    # Wrapper card container
+    st.markdown('<div class="workspace-card">', unsafe_allow_html=True)
+    st.markdown('<h3 class="workspace-title">🛠️ Mechanic Services Dashboard</h3>', unsafe_allow_html=True)
+    
+    # 📈 Metric Counter Layout
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        st.write("Manage active service bays and track continuous daily work volume items below.")
+    with col2:
+        st.metric(label="Daily Active Tickets", value=st.session_state.mechanic_tickets)
+    
+    st.markdown("---")
+    st.write("⚙️ **Counter Administration Controls**")
+    
+    # Interactive inline control buttons to change status metrics instantly
+    ctrl_col1, ctrl_col2, ctrl_col3 = st.columns(3)
+    with ctrl_col1:
+        if st.button("➕ Open New Ticket", key="add_tix"):
+            st.session_state.mechanic_tickets += 1
+            st.rerun()
+    with ctrl_col2:
+        if st.button("➖ Complete Ticket", key="sub_tix"):
+            if st.session_state.mechanic_tickets > 0:
+                st.session_state.mechanic_tickets -= 1
+                st.rerun()
+    with ctrl_col3:
+        if st.button("🔄 Reset Daily Count", key="reset_tix"):
+            st.session_state.mechanic_tickets = 0
+            st.rerun()
+            
+    st.markdown('</div>', unsafe_allow_html=True)
+
+elif st.session_state.view == "Work Performed":
+    st.markdown('<div class="workspace-card">', unsafe_allow_html=True)
+    st.markdown('<h3 class="workspace-title">📝 Work Performed Log</h3>', unsafe_allow_html=True)
+    
+    st.write("Submit formal service logging details. Entries are saved instantly to session memory storage below.")
+    
+    # Formal Text Form Entry Fields
+    with st.form(key="work_entry_form", clear_on_submit=True):
+        tech_name = st.text_input("Lead Mechanic / Technician Name", placeholder="e.g., J. Smith")
+        job_description = st.text_area("Detailed Summary of Work Performed", placeholder="e.g., Flushed transmission fluid, fixed wiring harness...")
+        submit_log = st.form_submit_button("Submit Formal Log Entry")
+        
+    if submit_log:
+        if tech_name and job_description:
+            current_date = datetime.now().strftime("%Y-%m-%d")
+            new_entry = pd.DataFrame([{"Date": current_date, "Tech": tech_name, "Job Details": job_description}])
+            st.session_state.work_records = pd.concat([st.session_state.work_records, new_entry], ignore_index=True)
+            st.success("Success: Data saved to session record!")
+        else:
+            st.error("Error: Please fill out all text input parameters before submitting.")
+            
+    # Display the current logged table records
+    st.markdown("#### 📋 Current Shift Logs")
+    st.dataframe(st.session_state.work_records, use_container_width=True, hide_index=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
