@@ -14,7 +14,7 @@ st.markdown("""
     <style>
     /* Sky Blue Background for the entire application */
     .stApp {
-        background-color: #87CEEB !important;
+        background-color: #87CEEC !important;
     }
     
     /* Center the Navy Blue Title and make size responsive */
